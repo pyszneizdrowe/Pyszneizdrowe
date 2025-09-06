@@ -6,9 +6,7 @@ Pyszne i Zdrowe💚
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Insta Slides — PyszneIZdrowe</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
   :root{ --bg:#0f1724; --panel:#0b1220; --accent:#f59e0b; --muted:#cbd5e1; }
   *{ box-sizing:border-box }
@@ -30,7 +28,7 @@ Pyszne i Zdrowe💚
   .small{ font-size:13px; padding:6px; border-radius:6px }
   .btn{
     background:var(--accent); border:none; color:#071022;
-    padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700
+    padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700;
   }
   .panel-row{ display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap }
   .preview{ flex:1; display:grid; place-items:center; gap:12px }
@@ -39,30 +37,27 @@ Pyszne i Zdrowe💚
   .slide{
     width:180px; height:225px; border-radius:8px; overflow:hidden;
     border:1px solid rgba(255,255,255,.06);
-    position:relative; display:flex; align-items:center; justify-content:center
+    position:relative; display:flex; align-items:center; justify-content:center;
   }
   .slide img{ width:100%; height:100%; object-fit:cover; display:block }
   .slide .text{
     position:absolute; left:12px; right:12px; bottom:12px; color:#fff;
-    font-family:Lora,serif; text-shadow:0 6px 20px rgba(0,0,0,.6); font-size:20px
+    font-family:Lora,serif; text-shadow:0 6px 20px rgba(0,0,0,.6); font-size:20px;
   }
   footer{ margin-top:12px; font-size:12px; color:#93c5fd }
   .note{ font-size:12px; color:#94a3b8; margin-top:8px }
 
-  /* input file скрытый, но не display:none — чтобы на iOS работало */
+  /* инпут файла скрытый, но НЕ display:none — нужно для iOS */
   .input-file{
     position:fixed; left:-9999px; top:-9999px; width:1px; height:1px;
     opacity:0; pointer-events:none;
   }
 
-  .canvas-wrap canvas{ width:100%; height:auto; display:block }
-
-  /* простая «плашка загрузки» */
-  .loader{ color:#9aaed0; font-size:13px; padding:18px }
+  .canvas-wrap canvas{ width:100%; height:auto; display:block; }
 
   @media (max-width: 900px){
-    body{ flex-direction: column; gap:12px; padding:12px; overflow-x:hidden }
-    .left{ width:100%; max-width:none }
+    body{ flex-direction: column; gap:12px; padding:12px; overflow-x:hidden; }
+    .left{ width:100%; max-width:none; }
   }
 </style>
 </head>
@@ -106,9 +101,9 @@ Pyszne i Zdrowe💚
       <label>Позиция по высоте</label>
       <select id="vpos" class="small">
         <option value="top">Сверху</option>
-<option value="upper">Выше центра</option>
+        <option value="upper">Выше центра</option>
         <option value="center" selected>По центру</option>
-        <option value="lower">Ниже центра</option>
+<option value="lower">Ниже центра</option>
         <option value="bottom">Внизу</option>
       </select>
     </div>
@@ -136,7 +131,6 @@ Pyszne i Zdrowe💚
     <button class="btn" id="generate">Собрать</button>
     <button id="clear" class="small">Очистить</button>
 
-    <!-- Лейбл как кнопка — открывает диалог выбора файлов -->
     <label for="imageLoader" class="small btn" style="cursor:pointer;">Загрузить фоны</label>
     <input id="imageLoader" class="input-file" type="file" accept="image/*" multiple>
 
@@ -153,7 +147,7 @@ Pyszne i Zdrowe💚
 </div>
 
 <script>
-/* ===== DOM refs ===== */
+/* ===== DOM ===== */
 const inputText = document.getElementById('inputText');
 const sizeEl = document.getElementById('size');
 const fontEl = document.getElementById('font');
@@ -173,15 +167,13 @@ const slidesContainer = document.getElementById('slidesContainer');
 const canvasContainer = document.getElementById('canvasContainer');
 
 /* ===== State ===== */
-let backgrounds = [];   // [{url: objectURL}]
+let backgrounds = []; // Array<HTMLImageElement> — уже декодированные изображения
 const MIN_FONT = 14;
 
 /* ===== Helpers ===== */
 function parseSlides(text){
   const parts = text.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean);
-  if (parts.length===0 && text.trim()!=='') {
-    return text.split(/\n/).map(p=>p.trim()).filter(Boolean);
-  }
+  if (parts.length===0 && text.trim()!=='') return text.split(/\n/).map(p=>p.trim()).filter(Boolean);
   return parts;
 }
 function sizeFromSelect(){
@@ -191,32 +183,15 @@ function sizeFromSelect(){
 function safeAreasFor(w,h){
   if (w===1080 && h===1920) return { top:200, bottom:200, side:60 }; // Stories
   if (w===1080 && h===1350) return { top:120, bottom:120, side:60 }; // 4:5
-  return { top:100, bottom:100, side:60 };
+  return { top:100, bottom:100, side:60 };                            // 1:1
 }
 function previewScaleFor(w){
   const available = canvasContainer.clientWidth || window.innerWidth;
   return Math.min(available / w, 1);
 }
-
-/* Надёжная загрузка больших изображений */
-async function loadImage(src){
-  // создаём <img> и ждём декодирования; для больших файлов это критично
-  const img = new Image();
-  img.decoding = 'async';
-  img.src = src;
-  // ждём decode(), но если браузер не поддерживает — fallback на onload
-  if (img.decode) {
-    try { await img.decode(); return img; }
-    catch { await new Promise((res,rej)=>{ img.onload=res; img.onerror=rej; }); return img; }
-  } else {
-    await new Promise((res,rej)=>{ img.onload=res; img.onerror=rej; });
-    return img;
-  }
-}
-
 function drawCoverImage(ctx,img,w,h){
-const iw=img.naturalWidth||img.width;
-  const ih=img.naturalHeight||img.height;
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
   const scale = Math.max(w/iw, h/ih);
   const dw = iw*scale, dh = ih*scale;
   const dx = (w - dw)/2, dy = (h - dh)/2;
@@ -225,45 +200,41 @@ const iw=img.naturalWidth||img.width;
   ctx.drawImage(img, dx, dy, dw, dh);
 }
 
-/* ===== Core render (async) ===== */
-async function renderSlides(){
+/* ===== RENDER (sync, т.к. картинки предзагружены) ===== */
+function renderSlides(){
   const slides = parseSlides(inputText.value);
   slidesContainer.innerHTML = '';
   canvasContainer.innerHTML = '';
-
   if (!slides.length){
-    canvasContainer.innerHTML = '<div class="loader">Вставьте текст и нажмите «Собрать»</div>';
-    return;
+    canvasContainer.innerHTML = '<div style="color:#9aaed0;padding:18px">Вставьте текст и нажмите «Собрать»</div>';
+return;
   }
 
   const {w,h} = sizeFromSelect();
   const scale = previewScaleFor(w);
   const previewW = Math.round(w*scale), previewH = Math.round(h*scale);
 
-  // Лоадер
-  canvasContainer.innerHTML = '<div class="loader">Рендерим…</div>';
-
   const fullCanvases = [];
 
-  for (let idx = 0; idx < slides.length; idx++){
-    const txt = slides[idx];
+  slides.forEach((txt, idx) => {
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
-    await drawSlideOnCanvas(c, txt, backgrounds.length ? backgrounds[idx % backgrounds.length].url : null);
+    const bgImg = backgrounds.length ? backgrounds[idx % backgrounds.length] : null;
+    drawSlideOnCanvas(c, txt, bgImg);
     fullCanvases.push(c);
 
-    // Миниатюра после готовности
+    // миниатюра (PNG для чёткости)
     const thumb = document.createElement('div');
     thumb.className = 'slide';
     const tH = 225, tW = Math.round(tH * (w/h));
     thumb.style.width = tW + 'px'; thumb.style.height = tH + 'px';
     const imgEl = new Image();
-    imgEl.src = c.toDataURL('image/png'); // PNG для чёткости
+    imgEl.src = c.toDataURL('image/png');
     thumb.appendChild(imgEl);
     slidesContainer.appendChild(thumb);
 
     // press&hold -> download
-    let pressTimer = null;
+    let pressTimer=null;
     const dl = () => downloadDataUrl(c.toDataURL('image/png'), 'slide-'+(idx+1)+'.png');
     thumb.addEventListener('mousedown', e=>{ e.preventDefault(); pressTimer=setTimeout(dl,700); });
     ['mouseup','mouseleave'].forEach(ev=> thumb.addEventListener(ev, ()=> clearTimeout(pressTimer)));
@@ -273,64 +244,64 @@ async function renderSlides(){
     // click -> big preview
     thumb.addEventListener('click', ()=>{
       canvasContainer.innerHTML = '';
-      const vcanvas = document.createElement('canvas');
-      vcanvas.width = previewW; vcanvas.height = previewH;
-      const ctx = vcanvas.getContext('2d');
-      const imgFull = new Image();
-      imgFull.onload = ()=> ctx.drawImage(imgFull, 0, 0, vcanvas.width, vcanvas.height);
-      imgFull.src = c.toDataURL('image/png');
-      canvasContainer.appendChild(vcanvas);
+      const v = document.createElement('canvas');
+      v.width = previewW; v.height = previewH;
+      const ctx = v.getContext('2d');
+      const im = new Image();
+      im.onload = ()=> ctx.drawImage(im, 0, 0, v.width, v.height);
+      im.src = c.toDataURL('image/png');
+      canvasContainer.appendChild(v);
     });
-  }
 
-  // Показываем первый слайд в превью
-  if (fullCanvases[0]){
-    const preview = document.createElement('canvas');
-    preview.width = previewW; preview.height = previewH;
-    const ctx = preview.getContext('2d');
-    const img = new Image();
-    img.onload = ()=> {
-      ctx.drawImage(img, 0, 0, preview.width, preview.height);
-      // Спрячем исходники в контейнер (для download all)
-      canvasContainer.innerHTML = '';
-      fullCanvases.forEach(c => { c.style.display='none'; canvasContainer.appendChild(c); });
-      canvasContainer.appendChild(preview);
-    };
-    img.src = fullCanvases[0].toDataURL('image/png');
+    // спрятать исходники для «Скачать все»
+    c.style.display='none';
+    canvasContainer.appendChild(c);
+  });
+
+  // первый в превью:
+  const first = fullCanvases[0];
+  if (first){
+    const prev = document.createElement('canvas');
+    prev.width = previewW; prev.height = previewH;
+    const ctx = prev.getContext('2d');
+    const im = new Image();
+    im.onload = ()=> ctx.drawImage(im, 0, 0, prev.width, prev.height);
+    im.src = first.toDataURL('image/png');
+    canvasContainer.innerHTML = '';
+    fullCanvases.forEach(c=> canvasContainer.appendChild(c)); // спрятанные
+    canvasContainer.appendChild(prev);
   }
 }
 
-/* Рендер одного слайда — теперь async */
-async function drawSlideOnCanvas(canvas, text, bgSrc){
+/* Один слайд */
+function drawSlideOnCanvas(canvas, text, bgImg){
   const ctx = canvas.getContext('2d');
   const w = canvas.width, h = canvas.height;
   const { top:safeTop, bottom:safeBottom, side:sidePad } = safeAreasFor(w,h);
 
   // фон
-  if (bgSrc){
-    const img = await loadImage(bgSrc);
-    drawCoverImage(ctx, img, w, h);
+  if (bgImg){
+    drawCoverImage(ctx, bgImg, w, h);
   } else {
     const g = ctx.createLinearGradient(0,0,0,h);
     g.addColorStop(0,'#0f1724'); g.addColorStop(1,'#07192a');
     ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
   }
 
-  // текст/подложка
-  await drawText(ctx, canvas, text, {safeTop, safeBottom, sidePad});
+  // текст
+  drawText(ctx, canvas, text, {safeTop, safeBottom, sidePad});
 }
 
-async function drawText(ctx, canvas, text, {safeTop, safeBottom, sidePad}){
+function drawText(ctx, canvas, text, {safeTop, safeBottom, sidePad}){
   const w = canvas.width, h = canvas.height;
   const backdrop = Number(backdropEl.value)||0;
   const lineHeight = Number(lineHeightEl.value)||1.2;
-  let fontSize = Number(fontSizeEl.
-value)||64;
+  let fontSize = Number(fontSizeEl.value)||64;
   const fontName = fontEl.value || 'Lora';
   const vpos = vposEl.value;
   const hpos = hposEl.value;
 
-  // подложка (в пределах safe)
+  // подложка в пределах safe
   if (backdrop > 0){
     const padBox = 24;
     const boxY = safeTop + padBox;
@@ -339,7 +310,7 @@ value)||64;
     ctx.fillRect(sidePad, boxY, w - sidePad*2, boxH);
   }
 
-  // X-позиция и выравнивание
+  // X и align
   let x;
   switch (hpos){
     case 'left':     x = sidePad; break;
@@ -358,7 +329,7 @@ value)||64;
   ctx.textBaseline = 'alphabetic';
 
   // перенос по ширине
-  const maxW = (align==='center') ? (w - sidePad*2) : (w - sidePad*1.5);
+const maxW = (align==='center') ? (w - sidePad*2) : (w - sidePad*1.5);
   const words = String(text||'').split(/\s+/).filter(Boolean);
 
   const wrapWithFS = (fs) => {
@@ -382,14 +353,13 @@ value)||64;
   const availableH = h - safeTop - safeBottom;
   let lines = wrapWithFS(fontSize);
   let totalH = lines.length * fontSize * lineHeight;
-
   while (totalH > availableH && fontSize > MIN_FONT){
     fontSize = Math.max(MIN_FONT, Math.floor(fontSize * 0.94));
     lines = wrapWithFS(fontSize);
     totalH = lines.length * fontSize * lineHeight;
   }
 
-  // базовая Y-координата
+  // базовая Y
   const safeCenter = safeTop + availableH/2;
   let baseY;
   switch (vpos){
@@ -400,7 +370,7 @@ value)||64;
     case 'bottom': baseY = safeTop + availableH - totalH; break;
     default:       baseY = safeCenter - totalH/2;
   }
-  // страховка в пределах safe
+  // страховка в границах safe
   if (baseY < safeTop + fontSize) baseY = safeTop + fontSize;
   if (baseY + totalH > safeTop + availableH) baseY = safeTop + availableH - totalH;
 
@@ -411,6 +381,7 @@ value)||64;
     ctx.fillText(lines[i], x, y);
   }
 
+  // стрелка
   if (showArrow.checked){
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.beginPath();
@@ -422,6 +393,29 @@ value)||64;
   }
 }
 
+/* ===== files => decoded <img> ===== */
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+async function filesToDecodedImages(files){
+  const images = [];
+  for (const f of files){
+    const dataURL = await fileToDataURL(f);     // совместимо со всем, как у тебя изначально
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = dataURL;
+    if (img.decode){ try{ await img.decode(); } catch{} }
+    await new Promise((res,rej)=>{ if (img.complete) return res(); img.onload=res; img.onerror=rej; });
+    images.push(img);                            // готовый, декодированный <img>
+  }
+  return images;
+}
+
 /* ===== Utils ===== */
 function downloadDataUrl(dataUrl, filename){
   const a = document.createElement('a');
@@ -430,31 +424,24 @@ function downloadDataUrl(dataUrl, filename){
 }
 
 /* ===== Events ===== */
-generateBtn.addEventListener('click', ()=> { renderSlides().catch(console.error); });
+generateBtn.addEventListener('click', renderSlides);
 clearBtn.addEventListener('click', ()=>{
   inputText.value=''; slidesContainer.innerHTML=''; canvasContainer.innerHTML='';
 });
-
-/* Загружаем тяжёлые изображения эффективно:
-   - используем Object URL (экономит память);
-   - рендерим после того, как ВСЕ ссылки готовы;
-   - освобождаем старые URL при новой загрузке. */
 imageLoader.addEventListener('change', async (e)=>{
-  // revoke старые
-  backgrounds.forEach(b=> { try{ URL.revokeObjectURL(b.url); }catch{} });
-  backgrounds = Array.from(e.target.files).map(f=> ({ url: URL.createObjectURL(f) }));
-  await renderSlides().catch(console.error);
+  const files = Array.from(e.target.files);
+  backgrounds = await filesToDecodedImages(files); // ПРЕДЗАГРУЗИЛИ и ДЕКОДИРОВАЛИ
+  renderSlides();
 });
-
 downloadAll.addEventListener('click', ()=>{
   const canvases = Array.from(canvasContainer.querySelectorAll('canvas')).filter(c=>c.width>0);
-  if (!canvases.length) return;
-  canvases.forEach((c,i)=> downloadDataUrl(c.toDataURL('image/png'), 'slide-'+(i+1)+'.png'));
+  canvases.forEach((c,i)=> downloadDataUrl(c.toDataURL('image/png'),'slide-'+(i+1)+'.png'));
 });
+
 /* ===== Init ===== */
-inputText.value = "Пример для Instagram.\n\nБольшие изображения теперь грузятся корректно, рендер ждёт декодирование и даёт чёткое превью.";
-renderSlides().catch(console.error);
-window.addEventListener('resize', ()=> { renderSlides().catch(console.error); });
+inputText.value = "Пример для Instagram.\n\nБольшие изображения теперь загружаются как DataURL и преддекодируются — рендер всегда чёткий.";
+renderSlides();
+window.addEventListener('resize', renderSlides);
 </script>
 </body>
 </html>
