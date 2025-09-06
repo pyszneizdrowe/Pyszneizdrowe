@@ -1,6 +1,5 @@
 ## Cześć 👋
 
-<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
@@ -10,81 +9,60 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-  :root{
-    --bg:#0f1724; --panel:#0b1220; --accent:#f59e0b; --muted:#cbd5e1;
-  }
-  *{box-sizing:border-box}
+  :root{ --bg:#0f1724; --panel:#0b1220; --accent:#f59e0b; --muted:#cbd5e1; }
+  *{ box-sizing:border-box }
   body{
-    margin:0;
-    font-family:Montserrat,system-ui,Arial;
+    margin:0; font-family:Montserrat,system-ui,Arial;
     background:linear-gradient(180deg,#071024 0%, #07192a 100%);
-    color:var(--muted);
-    min-height:100vh;
-    display:flex;
-    gap:18px;
-    padding:18px
+    color:var(--muted); min-height:100vh; display:flex; gap:18px; padding:18px;
   }
   .left{
-    width:420px;
-    max-width:40vw;
-    background:var(--panel);
-    padding:16px;
-    border-radius:10px;
-    box-shadow:0 6px 20px rgba(2,6,23,.6)
+    width:420px; max-width:40vw; background:var(--panel); padding:16px;
+    border-radius:10px; box-shadow:0 6px 20px rgba(2,6,23,.6);
   }
-  h1{margin:0 0 12px 0;font-size:18px;color:#fff}
-  label{display:block;margin-top:10px;font-size:13px;color:#cbd5e1}
+  h1{ margin:0 0 12px 0; font-size:18px; color:#fff }
+  label{ display:block; margin-top:10px; font-size:13px; color:#cbd5e1 }
   textarea{
-    width:100%;height:140px;padding:8px;border-radius:6px;
-    border:1px solid rgba(255,255,255,.06);
-    background:#071426;color:#fff;resize:vertical
+    width:100%; height:140px; padding:8px; border-radius:6px;
+    border:1px solid rgba(255,255,255,.06); background:#071426; color:#fff; resize:vertical;
   }
-  .controls{display:flex;gap:8px;flex-wrap:wrap}
-  .controls > *{flex:1 1 48%}
-  .small{font-size:13px;padding:6px;border-radius:6px}
+  .controls{ display:flex; gap:8px; flex-wrap:wrap }
+  .controls > *{ flex:1 1 48% }
+  .small{ font-size:13px; padding:6px; border-radius:6px }
   .btn{
-    background:var(--accent);border:none;color:#071022;
-    padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700
+    background:var(--accent); border:none; color:#071022;
+    padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700;
   }
-  .panel-row{display:flex;gap:8px;align-items:center;margin-top:8px}
-  .preview{flex:1;display:grid;place-items:center;gap:12px}
-  .canvas-wrap{background:#000;padding:10px;border-radius:12px}
-  .slides{display:flex;gap:8px;flex-wrap:wrap}
+  .panel-row{ display:flex; gap:8px; align-items:center; margin-top:8px }
+  .preview{ flex:1; display:grid; place-items:center; gap:12px }
+  .canvas-wrap{ background:#000; padding:10px; border-radius:12px }
+  .slides{ display:flex; gap:8px; flex-wrap:wrap }
   .slide{
-    width:180px;height:225px;border-radius:8px;overflow:hidden;
+    width:180px; height:225px; border-radius:8px; overflow:hidden;
     border:1px solid rgba(255,255,255,.06);
-    position:relative;display:flex;align-items:center;justify-content:center
+    position:relative; display:flex; align-items:center; justify-content:center;
   }
-  .slide img{width:100%;height:100%;object-fit:cover;display:block}
+  .slide img{ width:100%; height:100%; object-fit:cover; display:block }
   .slide .text{
-    position:absolute;left:12px;right:12px;bottom:12px;color:#fff;
-    font-family:Lora,serif;text-shadow:0 6px 20px rgba(0,0,0,.6);font-size:20px
+    position:absolute; left:12px; right:12px; bottom:12px; color:#fff;
+    font-family:Lora,serif; text-shadow:0 6px 20px rgba(0,0,0,.6); font-size:20px;
   }
-  .input-file{display:none}
-  footer{margin-top:12px;font-size:12px;color:#93c5fd}
-  .range{width:100%}
-  .option{display:flex;gap:8px;align-items:center}
-  .note{font-size:12px;color:#94a3b8;margin-top:8px}
+  footer{ margin-top:12px; font-size:12px; color:#93c5fd }
+  .note{ font-size:12px; color:#94a3b8; margin-top:8px }
 
-  /* === ДОБАВЛЕНО для адаптивности === */
-  .canvas-wrap{ width:100%; }
-  .canvas-wrap canvas{
-    width:100%;
-    height:auto;
-    display:block;
+  /* инпут файла «невидим», но не display:none — чтобы iOS открывал диалог */
+  .input-file{
+    position:fixed; left:-9999px; top:-9999px; width:1px; height:1px;
+    opacity:0; pointer-events:none;
   }
+
+  /* адаптивность */
+  .canvas-wrap{ width:100%; }
+  .canvas-wrap canvas{ width:100%; height:auto; display:block; }
 
   @media (max-width: 900px){
-    body{
-      flex-direction: column;
-      gap:12px;
-      padding:12px;
-      overflow-x:hidden;
-    }
-    .left{
-      width:100%;
-      max-width:none;
-    }
+    body{ flex-direction: column; gap:12px; padding:12px; overflow-x:hidden; }
+    .left{ width:100%; max-width:none; }
   }
 </style>
 </head>
@@ -132,7 +110,8 @@
       <input id="padding" type="number" class="small" value="48" min="4" max="220">
     </div>
     <div style="width:140px">
-      <label>Прозрачность задника</label><input id="backdrop" type="number" class="small" value="0" min="0" max="1" step="0.05">
+<label>Прозрачность задника</label>
+      <input id="backdrop" type="number" class="small" value="0" min="0" max="1" step="0.05">
     </div>
   </div>
 
@@ -151,19 +130,21 @@
     </div>
   </div>
 
-  <div style="margin-top:10px;display:flex;gap:8px">
+  <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <button class="btn" id="generate">Update Slides</button>
     <button id="clear" class="small">Clear</button>
-    <label style="display:inline-block" class="small">
+    <label class="small" style="display:inline-flex;align-items:center;gap:6px;margin:0">
       <input id="showArrow" type="checkbox"> Показать стрелку "Swipe"
     </label>
   </div>
 
   <label style="margin-top:12px">Загрузить изображения (можно менять по слайду)</label>
+  <!-- кнопка-лейбл открывает диалог выбора файлов везде, включая iOS -->
+  <label for="imageLoader" id="addImages" class="small btn" style="display:inline-block;cursor:pointer;">Загрузить фоны</label>
   <input id="imageLoader" class="input-file" type="file" accept="image/*" multiple>
-  <div class="panel-row">
-    <button id="addImages" class="small">Загрузить фоны</button>
-    <button id="downloadAll" class="small">Скачать все (ZIP)</button>
+
+  <div class="panel-row" style="margin-top:10px">
+    <button id="downloadAll" class="small">Скачать все (PNG)</button>
   </div>
 
   <div class="note">Нажмите и удерживайте миниатюру слайда, чтобы скачать её как изображение.</div>
@@ -171,15 +152,12 @@
 </div>
 
 <div class="preview">
-  <div class="canvas-wrap" id="canvasContainer">
-    <!-- rendered canvas will appear here scaled -->
-  </div>
-
+  <div class="canvas-wrap" id="canvasContainer"><!-- rendered canvas here --></div>
   <div class="slides" id="slidesContainer"></div>
 </div>
 
 <script>
-/* Simple slide generator: split textarea by blank-line or newline -> create canvases */
+/* refs */
 const inputText = document.getElementById('inputText');
 const generateBtn = document.getElementById('generate');
 const clearBtn = document.getElementById('clear');
@@ -194,32 +172,32 @@ const radiusEl = document.getElementById('radius');
 const sizeEl = document.getElementById('size');
 const backdropEl = document.getElementById('backdrop');
 const imageLoader = document.getElementById('imageLoader');
-const addImages = document.getElementById('addImages');
 const showArrow = document.getElementById('showArrow');
 const downloadAll = document.getElementById('downloadAll');
 
+/* scale under container width */
 function previewScaleFor(w){
   const available = canvasContainer.clientWidth || window.innerWidth;
   return Math.min(available / w, 1); // не увеличиваем >100%
 }
 
-let backgrounds = []; // File objects or dataURLs
+/* state */
+let backgrounds = []; // File objects или dataURL
 
+/* helpers */
 function parseSlides(text){
-  // split by two newlines or each newline if single line paragraphs
   const parts = text.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean);
   if(parts.length===0 && text.trim()!==''){
-    // split by single newline fallback
     return text.split(/\n/).map(p=>p.trim()).filter(Boolean);
   }
   return parts;
 }
-
 function sizeFromSelect(){
   const v = sizeEl.value.split('x');
-  return {w: parseInt(v[0]), h: parseInt(v[1])};
+  return {w: parseInt(v[0],10), h: parseInt(v[1],10)};
 }
 
+/* core render */
 function renderSlides(){
   const slides = parseSlides(inputText.value);
   slidesContainer.innerHTML = '';
@@ -235,11 +213,15 @@ function renderSlides(){
   const previewH = Math.round(h * scale);
 
   slides.forEach((txt, idx) => {
-    // полный канвас (для экспорта / источника превью)
+    /* полный канвас (источник правды/экспорта) */
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
-    c.dataset.index = idx;
-    drawSlideOnCanvas(c, txt, backgrounds[idx] || null);// миниатюра ~225px по высоте с сохранением пропорций
+    c.dataset.
+index = idx;
+    const bg = backgrounds.length ? backgrounds[idx % backgrounds.length] : null; // ЗАЦИКЛИВАНИЕ ФОНОВ
+    drawSlideOnCanvas(c, txt, bg);
+
+    /* миниатюра ~225px по высоте */
     const thumb = document.createElement('div');
     thumb.className = 'slide';
     const targetH = 225;
@@ -258,7 +240,7 @@ function renderSlides(){
 
     slidesContainer.appendChild(thumb);
 
-    // долгое нажатие — скачать этот слайд
+    /* долгое нажатие — скачать png */
     let pressTimer = null;
     const downloadCurrent = () => downloadDataUrl(c.toDataURL('image/png'), 'slide-' + (idx + 1) + '.png');
     thumb.addEventListener('mousedown', (e) => { e.preventDefault(); pressTimer = setTimeout(downloadCurrent, 700); });
@@ -266,12 +248,11 @@ function renderSlides(){
     thumb.addEventListener('touchstart', () => { pressTimer = setTimeout(downloadCurrent, 700); });
     thumb.addEventListener('touchend', () => clearTimeout(pressTimer));
 
-    // клик по миниатюре — показать большой превью
+    /* клик — показать большой превью */
     thumb.addEventListener('click', () => {
       canvasContainer.innerHTML = '';
       const vcanvas = document.createElement('canvas');
-      vcanvas.width = previewW;
-      vcanvas.height = previewH;
+      vcanvas.width = previewW; vcanvas.height = previewH;
       const ctx = vcanvas.getContext('2d');
       const imgFull = new Image();
       imgFull.onload = () => { ctx.drawImage(imgFull, 0, 0, vcanvas.width, vcanvas.height); };
@@ -279,17 +260,16 @@ function renderSlides(){
       canvasContainer.appendChild(vcanvas);
     });
 
-    // прячем полный канвас (нужен для экспорта всех)
+    /* спрятать исходный канвас (для экспорта всех) */
     c.style.display = 'none';
     canvasContainer.appendChild(c);
   });
 
-  // первый слайд — сразу показать в большом превью
+  /* первый слайд сразу в превью */
   const firstCanvas = canvasContainer.querySelector('canvas[style*="display: none"]');
   if (firstCanvas) {
     const preview = document.createElement('canvas');
-    preview.width = previewW;
-    preview.height = previewH;
+    preview.width = previewW; preview.height = previewH;
     const ctx = preview.getContext('2d');
     const img = new Image();
     img.onload = () => ctx.drawImage(img, 0, 0, preview.width, preview.height);
@@ -299,67 +279,63 @@ function renderSlides(){
   }
 }
 
+/* отрисовка одного слайда */
 function drawSlideOnCanvas(canvas, text, bgData){
   const ctx = canvas.getContext('2d');
-  const w = canvas.width;
-  const h = canvas.height;
+  const w = canvas.width, h = canvas.height;
 
-  // background
+  // фон
   if (bgData) {
     if (typeof bgData === 'string') {
       const img = new Image();
       img.onload = ()=> { ctx.drawImage(img,0,0,w,h); drawTextBlock(); };
       img.src = bgData;
+      return;
     } else if (bgData instanceof HTMLImageElement) {
-      ctx.drawImage(bgData,0,0,w,h);
-      drawTextBlock();
+      ctx.drawImage(bgData,0,0,w,h); drawTextBlock(); return;
     } else {
-      // file object - create dataURL
+      // File
       const reader = new FileReader();
-      reader.onload = ()=> {
-        const img = new Image();
+      reader.onload = ()=> { const img = new Image();
         img.onload = ()=> { ctx.drawImage(img,0,0,w,h); drawTextBlock(); };
         img.src = reader.result;
       };
       reader.readAsDataURL(bgData);
+      return;
     }
-  } else {
-    // default gradient
-    const g = ctx.createLinearGradient(0,0,0,h);
-    g.addColorStop(0,'#0f1724'); g.addColorStop(1,'#07192a');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,w,h);
-    drawTextBlock();
   }
+  // дефолтный градиент
+  const g = ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,'#0f1724'); g.addColorStop(1,'#07192a');
+  ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+  drawTextBlock();
 
   function drawTextBlock(){
-    // backdrop opacity
     const pad = Number(paddingEl.value)||48;
-    const radius = Number(radiusEl.value)||20; // (пока не используем, но оставим для будущего)
+    const radius = Number(radiusEl.value)||20; // (на будущее, если захочешь скруглённую подложку)
     const backdrop = Number(backdropEl.value)||0;
+
     if (backdrop > 0) {
       ctx.fillStyle = rgba(0,0,0,${backdrop});
       ctx.fillRect(0, h - Math.min(h*0.6, pad*8) - pad, w, Math.min(h*0.6, pad*8) + pad);
     }
 
-    // text
     let fontSize = Number(fontSizeEl.value)||48;
     const lineHeight = Number(lineHeightEl.value)||1.15;
     const fontName = fontEl.value || 'Lora';
+
     ctx.fillStyle = '#fff';
-    ctx.textAlign = alignEl.value || 'center';
     ctx.
-    textBaseline = 'bottom';
+textAlign = alignEl.value || 'center';
+    ctx.textBaseline = 'bottom';
     ctx.font = ${fontSize}px ${fontName};
 
-    // wrap text
     const maxW = w - pad*2;
     const words = text.split(/\s+/);
     let lines = [];
-    let cur = '';
     const recomputeLines = () => {
       lines = [];
-      cur = '';
+      let cur = '';
       words.forEach(word=>{
         const test = cur ? cur + ' ' + word : word;
         if (ctx.measureText(test).width > maxW) {
@@ -371,7 +347,6 @@ function drawSlideOnCanvas(canvas, text, bgData){
     };
     recomputeLines();
 
-    // adjust font size if lines too many
     const maxLines = Math.floor((h - pad*2) / (fontSize * lineHeight));
     while (lines.length > maxLines && fontSize > 14) {
       fontSize = Math.floor(fontSize * 0.94);
@@ -379,22 +354,17 @@ function drawSlideOnCanvas(canvas, text, bgData){
       recomputeLines();
     }
 
-    // draw lines bottom-up with padding
     let x;
     if (alignEl.value === 'center') x = w/2;
     else if (alignEl.value === 'left') x = pad;
     else x = w - pad;
 
-    const totalH = lines.length * fontSize * lineHeight;
-    let startY = h - pad - ((lines.length-1) * fontSize * lineHeight);
-
-    ctx.fillStyle = '#fff';
+    const startY = h - pad - ((lines.length-1) * fontSize * lineHeight);
     for (let i=0;i<lines.length;i++){
       const y = startY + i * fontSize * lineHeight + fontSize;
       ctx.fillText(lines[i], x, y);
     }
 
-    // optional swipe arrow
     if (showArrow.checked) {
       ctx.fillStyle = 'rgba(255,255,255,0.85)';
       ctx.beginPath();
@@ -407,35 +377,26 @@ function drawSlideOnCanvas(canvas, text, bgData){
   }
 }
 
+/* utils */
 function downloadDataUrl(dataUrl, filename){
   const a = document.createElement('a');
-  a.href = dataUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+  a.href = dataUrl; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
-generateBtn.addEventListener('click', ()=> renderSlides());
+/* events */
+generateBtn.addEventListener('click', renderSlides);
 clearBtn.addEventListener('click', ()=> { inputText.value=''; slidesContainer.innerHTML=''; canvasContainer.innerHTML=''; });
-
-addImages.addEventListener('click', ()=> imageLoader.click());
 imageLoader.addEventListener('change', (e)=>{
-  const files = Array.from(e.target.files);
-  backgrounds = files; // по индексу к слайдам
+  backgrounds = Array.from(e.target.files); // массив файлов
   renderSlides();
 });
-
-// download all: простой вариант — скачать по одному (кнопка названа ZIP, но без JSZip сохраняем поштучно)
 downloadAll.addEventListener('click', ()=>{
   const canvases = Array.from(canvasContainer.querySelectorAll('canvas')).filter(c=>c.width>0);
-  canvases.forEach((c,i)=> {
-    const url = c.toDataURL('image/png');
-    downloadDataUrl(url, 'slide-'+(i+1)+'.png');
-  });
+  canvases.forEach((c,i)=> downloadDataUrl(c.toDataURL('image/png'), 'slide-'+(i+1)+'.png'));
 });
 
-// initial sample
+/* init */
 inputText.value = "Добро пожаловать в Pyszne i Zdrowe!\n\nМы готовим вкусные полуфабрикаты без лишнего сахара.\n\nСоветы по хранению и рецепту — добавьте сюда текст.";
 renderSlides();
 window.addEventListener('resize', renderSlides);
