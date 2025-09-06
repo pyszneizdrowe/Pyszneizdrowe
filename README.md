@@ -1,6 +1,6 @@
 ## Cześć 👋
 
-<Pyszne i Zdrowe 💚>
+Pyszne i Zdrowe 💚
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
